@@ -163,6 +163,7 @@ public class RedmineApiController{
 
     // }
 
+    //GET ALL TIME_ENTRIES for a single user (regardless of projects)
     @GetMapping("/time_entries/{user_id}")
     public ResponseEntity<List<TimeEntry>> getAllTimeEntriesByUserId(@PathVariable Integer user_id){
 
@@ -187,6 +188,7 @@ public class RedmineApiController{
 
     }
 
+    //GET ALL TIME_ENTRIES for a single user for a single (given) project
     @GetMapping("/time_entries/{user_id}/{project_id}")
     public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdAndByProjectId(@PathVariable Integer user_id, @PathVariable Integer project_id){
 
@@ -213,6 +215,33 @@ public class RedmineApiController{
     }
 
 
+    //GET TIME_ENTRIES for a single user (regardless of projects) for a given date range
+    @GetMapping("/time_entries/{user_id}/{from}/{to}")
+    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdByDateRange(@RequestParam("user_id") Integer user_id, 
+                                        @RequestParam("from") String from, @RequestParam("to") String to){
+
+        TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
+        
+        final Map<String, String> params = new HashMap<>();
+
+        params.put("user_id", String.valueOf(user_id));
+        params.put("from", from);
+        params.put("to", to);
+
+        List<TimeEntry> elements = new ArrayList<>();
+
+        try {
+
+            elements = timeEntryManager.getTimeEntries(params).getResults();
+
+        } catch (RedmineException e) {
+            
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok(elements);
+
+    }
 
     @GetMapping("/issues/{id}")
     public ResponseEntity<Issue> getIssueById(@PathVariable Integer id) {
