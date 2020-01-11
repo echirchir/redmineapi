@@ -29,16 +29,21 @@ public class RedmineApiController{
     private String URI = "http://localhost:8090/";
     private final RedmineManager manager = RedmineManagerFactory.createWithApiKey(URI, API_KEY);
 
+    /*
+    * DEFAULT route for the home page
+    * 
+    */ 
     @GetMapping("/")
     public String home(){
 
         return "home";
     }
 
+
     @GetMapping("/users")
     public ResponseEntity<List<User>> users(){
 
-        manager.setObjectsPerPage(100);
+        manager.setObjectsPerPage(50);
 
         List<User> users = new ArrayList<>();
 
@@ -58,7 +63,7 @@ public class RedmineApiController{
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id){
 
-        manager.setObjectsPerPage(100);
+        manager.setObjectsPerPage(1);
 
         User user = null;
 
@@ -79,7 +84,7 @@ public class RedmineApiController{
     @GetMapping("/projects")
     public ResponseEntity<List<Project>> getAllProjects() {
 
-        manager.setObjectsPerPage(100);
+        manager.setObjectsPerPage(200);
 
         List<Project> projects = new ArrayList<>();
 
@@ -117,12 +122,13 @@ public class RedmineApiController{
         return ResponseEntity.ok(project);
     }
 
+    // GET  members from the server by project id
     @GetMapping("/projects/{id}/members")
     public ResponseEntity<List<Membership>> getProjectMembers(@PathVariable Integer id) {
 
         manager.setObjectsPerPage(100);
 
-        List<Membership> members = null;
+        List<Membership> members = new ArrayList<>();
 
         try {
 
@@ -191,8 +197,7 @@ public class RedmineApiController{
 
     //GET TIME_ENTRIES for a single user (regardless of projects) for a given date range
     @GetMapping("/users/{user_id}/time_entries")
-    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdByDateRange(@PathVariable Integer user_id, 
-                                        @RequestParam("from") String from, @RequestParam("to") String to){
+    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdByDateRange(@PathVariable Integer user_id, @RequestParam("from") String from, @RequestParam("to") String to){
 
         TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
         
