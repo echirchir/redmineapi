@@ -137,32 +137,6 @@ public class RedmineApiController{
         return ResponseEntity.ok(members);
     }
 
-    // @GetMapping("/time_entries/{project_id}")
-    // public ResponseEntity<List<TimeEntry>> getTimeEntriesByProjectId(@PathVariable Integer project_id){
-
-    //     TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
-        
-    //     final Map<String, String> params = new HashMap<>();
-
-    //     params.put("project_id", String.valueOf(project_id));
-
-    //     List<TimeEntry> timeEntries = null;
-
-    //     try{
-
-    //         timeEntries = timeEntryManager.getTimeEntries(params).getResults();
-
-    //     }catch( RedmineException ex ){
-
-    //         ex.printStackTrace();
-    //     }
-
-
-    //     return ResponseEntity.ok(timeEntries);
-
-
-    // }
-
     //GET ALL TIME_ENTRIES for a single user (regardless of projects)
     @GetMapping("/time_entries/{user_id}")
     public ResponseEntity<List<TimeEntry>> getAllTimeEntriesByUserId(@PathVariable Integer user_id){
@@ -216,8 +190,8 @@ public class RedmineApiController{
 
 
     //GET TIME_ENTRIES for a single user (regardless of projects) for a given date range
-    @GetMapping("/time_entries/{user_id}/{from}/{to}")
-    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdByDateRange(@RequestParam("user_id") Integer user_id, 
+    @GetMapping("/users/{user_id}/time_entries")
+    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdByDateRange(@PathVariable Integer user_id, 
                                         @RequestParam("from") String from, @RequestParam("to") String to){
 
         TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
@@ -243,18 +217,20 @@ public class RedmineApiController{
 
     }
 
-    @GetMapping("/issues/{id}")
-    public ResponseEntity<Issue> getIssueById(@PathVariable Integer id) {
-
-        RedmineManager manager = RedmineManagerFactory.createWithApiKey(URI, API_KEY);
+    @GetMapping("/projects/{id}/issues")
+    public ResponseEntity<List<Issue>> getIssueById(@PathVariable Integer id) {
 
         manager.setObjectsPerPage(100);
 
-        Issue issue = null;
+        final Map<String, String> params = new HashMap<>();
+
+        params.put("project_id", String.valueOf(id));
+
+        List<Issue> issues = new ArrayList<>();
 
         try {
 
-            issue = manager.getIssueManager().getIssueById(id);
+            issues = manager.getIssueManager().getIssues(params).getResults();
 
         } catch (RedmineException e) {
         
@@ -262,7 +238,7 @@ public class RedmineApiController{
 
         }
 
-        return ResponseEntity.ok(issue);
+        return ResponseEntity.ok(issues);
     }
 
 }
