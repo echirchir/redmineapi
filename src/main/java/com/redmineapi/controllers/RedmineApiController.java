@@ -13,6 +13,7 @@ import com.taskadapter.redmineapi.bean.Issue;
 import com.taskadapter.redmineapi.bean.Membership;
 import com.taskadapter.redmineapi.bean.Project;
 import com.taskadapter.redmineapi.bean.TimeEntry;
+import com.taskadapter.redmineapi.bean.User;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,46 @@ public class RedmineApiController{
     public String home(){
 
         return "home";
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> users(){
+
+        manager.setObjectsPerPage(100);
+
+        List<User> users = new ArrayList<>();
+
+        try {
+
+            users = manager.getUserManager().getUsers();
+
+        } catch (RedmineException e) {
+        
+            e.printStackTrace();
+
+        }
+
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Integer id){
+
+        manager.setObjectsPerPage(100);
+
+        User user = null;
+
+        try {
+
+            user = manager.getUserManager().getUserById(id);
+
+        } catch (RedmineException e) {
+        
+            e.printStackTrace();
+
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     // GET ALL existing projects from the server visible to the authenticated user or public
@@ -54,27 +95,6 @@ public class RedmineApiController{
 
         return ResponseEntity.ok(projects);
     }
-
-    // GET  project from the server by project identifier/key
-    // @GetMapping("/projects/{project_key}")
-    // public ResponseEntity<Project> getProjectByIdentifier(@PathVariable String project_key) {
-
-    //     manager.setObjectsPerPage(100);
-
-    //     Project project = null;
-
-    //     try {
-
-    //         project = manager.getProjectManager().getProjectByKey(project_key);
-
-    //     } catch (RedmineException e) {
-        
-    //         e.printStackTrace();
-
-    //     }
-
-    //     return ResponseEntity.ok(project);
-    // }
 
     // GET  project from the server by project id
     @GetMapping("/projects/{id}")
@@ -117,26 +137,6 @@ public class RedmineApiController{
         return ResponseEntity.ok(members);
     }
 
-    @GetMapping("/issues/{id}")
-    public ResponseEntity<List<Issue>> getAllIssues(@PathVariable Integer id) {
-
-        manager.setObjectsPerPage(100);
-
-        List<Issue> issues = null;
-
-        try {
-
-            issues = manager.getIssueManager().getIssues(null, id);
-            
-        } catch (RedmineException e) {
-        
-            e.printStackTrace();
-
-        }
-
-        return ResponseEntity.ok(issues);
-    }
-
     // @GetMapping("/time_entries/{project_id}")
     // public ResponseEntity<List<TimeEntry>> getTimeEntriesByProjectId(@PathVariable Integer project_id){
 
@@ -164,7 +164,7 @@ public class RedmineApiController{
     // }
 
     @GetMapping("/time_entries/{user_id}")
-    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserId(@RequestParam("user_id") Integer user_id){
+    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserId(@PathVariable Integer user_id){
 
         TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
         
@@ -185,7 +185,6 @@ public class RedmineApiController{
 
         return ResponseEntity.ok(elements);
 
-        
     }
 
 
