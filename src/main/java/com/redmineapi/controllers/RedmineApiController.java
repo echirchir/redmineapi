@@ -164,7 +164,7 @@ public class RedmineApiController{
     // }
 
     @GetMapping("/time_entries/{user_id}")
-    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserId(@PathVariable Integer user_id){
+    public ResponseEntity<List<TimeEntry>> getAllTimeEntriesByUserId(@PathVariable Integer user_id){
 
         TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
         
@@ -186,6 +186,32 @@ public class RedmineApiController{
         return ResponseEntity.ok(elements);
 
     }
+
+    @GetMapping("/time_entries/{user_id}/{project_id}")
+    public ResponseEntity<List<TimeEntry>> getTimeEntriesByUserIdAndByProjectId(@PathVariable Integer user_id, @PathVariable Integer project_id){
+
+        TimeEntryManager timeEntryManager = manager.getTimeEntryManager();
+        
+        final Map<String, String> params = new HashMap<>();
+
+        params.put("user_id", String.valueOf(user_id));
+        params.put("project_id", String.valueOf(project_id));
+
+        List<TimeEntry> elements = new ArrayList<>();
+
+        try {
+
+            elements = timeEntryManager.getTimeEntries(params).getResults();
+
+        } catch (RedmineException e) {
+            
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok(elements);
+
+    }
+
 
 
     @GetMapping("/issues/{id}")
