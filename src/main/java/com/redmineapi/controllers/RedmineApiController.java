@@ -26,7 +26,6 @@ public class RedmineApiController{
 
     private String API_KEY = "c886284e44fbec5b6a9c5326503809a339fa9974";
     private String URI = "http://localhost:8090/";
-
     private final RedmineManager manager = RedmineManagerFactory.createWithApiKey(URI, API_KEY);
 
     @GetMapping("/")
@@ -81,7 +80,6 @@ public class RedmineApiController{
     @GetMapping("/projects/{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable Integer id) {
 
-
         manager.setObjectsPerPage(100);
 
         Project project = null;
@@ -102,7 +100,6 @@ public class RedmineApiController{
     @GetMapping("/projects/{id}/members")
     public ResponseEntity<List<Membership>> getProjectMembers(@PathVariable Integer id) {
 
-
         manager.setObjectsPerPage(100);
 
         List<Membership> members = null;
@@ -120,8 +117,8 @@ public class RedmineApiController{
         return ResponseEntity.ok(members);
     }
 
-    @GetMapping("/issues/{project_key}")
-    public ResponseEntity<List<Issue>> getAllIssues(@PathVariable String project_key) {
+    @GetMapping("/issues/{id}")
+    public ResponseEntity<List<Issue>> getAllIssues(@PathVariable Integer id) {
 
         manager.setObjectsPerPage(100);
 
@@ -129,7 +126,7 @@ public class RedmineApiController{
 
         try {
 
-            issues = manager.getIssueManager().getIssues(project_key, null);
+            issues = manager.getIssueManager().getIssues(null, id);
             
         } catch (RedmineException e) {
         
